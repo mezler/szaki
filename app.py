@@ -1,34 +1,34 @@
 import streamlit as st
 import google.generativeai as genai
-from audio_recorder_streamlit import audio_recorder
-import io
 
-
-api_key = st.secrets["GEMINI_API_KEY"]
+# 1. Konfiguráció (A Secrets-ből olvassa)
+api_key = st.secrets["GOOGLE_API_KEY"]
 genai.configure(api_key=api_key)
-
-# Most már használhatod a modellt:
 model = genai.GenerativeModel('gemini-1.5-flash')
 
+st.title("🎤 Munkalap Generáló")
 
-st.title("🎤 Munkalap Diktáló (Google Gemini)")
+# 2. Szövegbeviteli mező (Ide diktál a telefonod billentyűzetével)
+st.subheader("Diktáld vagy írd be a munkát:")
+szoveg = st.text_area("Munka részletei:", height=150, placeholder="Példa: Kovács Jánosnál klímatisztítást végeztem, 2 óra, szűrőcsere.")
 
-audio_bytes = audio_recorder(text="Nyomd meg és diktálj!", icon_size="3x")
-
-if audio_bytes:
-    st.audio(audio_bytes, format="audio/wav")
-    
-    if st.button("Munkalap generálása"):
+# 3. Generálás gomb (Kint van az if-en kívül, így mindig látszik)
+if st.button("Munkalap generálása"):
+    if szoveg:
         with st.spinner("Elemzés..."):
-            # Mivel a Gemini API közvetlenül nem dolgozza fel az audió fájlt ilyen egyszerűen, 
-            # a legegyszerűbb, ha a diktált szöveget kézzel írod be, VAGY
-            # használod a Google saját "speech-to-text" megoldását.
+            # A prompt kényszeríti a magyar nyelvet és a JSON formátumot
+            prompt = f"""
+            Feladat: Nyerj ki adatokat a következő magyar szövegből.
+            Válaszod SZIGORÚAN csak JSON formátum legyen az alábbi kulcsokkal:
+            'ugyfel', 'munka', 'ido_ora', 'anyagok'.
             
-            st.info("Megjegyzés: A Google Gemini API ingyenes, de a hangfájlokat külön kell szöveggé alakítani.")
-            st.write("Ide írd be a munkát, amit diktáltál:")
-            szoveg = st.text_area("Diktált szöveg:")
+            Szöveg: {szoveg}
+            """
             
-            if st.button("Generálás szövegből"):
-                prompt = f"Nyerd ki a munkalap adatait ebből: {szoveg}. Válasz JSON formátumban legyen."
-                response = model.generate_content(prompt)
-                st.write(response.text)
+            response = model.generate_content(prompt)
+            
+            # Eredmény megjelenítése
+            st.success("Munkalap kész!")
+            st.code(response.text, language='json')
+    else:
+        st.warning("Kérlek, diktálj vagy írj be valamit először!")
