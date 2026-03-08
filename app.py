@@ -6,7 +6,7 @@ import io
 import json
 
 # API Kulcs - Ide illeszd be a saját sk-... kulcsodat
-client = OpenAI(api_key="AZ_TE_OPENAI_KULCSOD")
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 st.set_page_config(page_title="Munkalap AI", layout="centered")
 st.title("🎤 Munkalap Diktáló")
