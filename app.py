@@ -4,7 +4,7 @@ import google.generativeai as genai
 # 1. Konfiguráció (A Secrets-ből olvassa)
 api_key = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
+model = genai.GenerativeModel(model_name='gemini-1.5-flash')
 
 st.title("🎤 Munkalap Generáló")
 
