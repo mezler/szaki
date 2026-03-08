@@ -1,7 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 # EZT A RÉSZT TEDD BE A KÓDBA IDEIGLENESEN:
 st.subheader("Elérhető modellek:")
